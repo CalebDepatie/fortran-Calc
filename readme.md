@@ -1,1 +1,1 @@
-A simple GUI based calculator written in fortran using gtk-fortran for the GUI elements.
+A simple GUI based calculator written in fortran using gtk-fortran for the GUI elements. (Uses Free-form fortran)
