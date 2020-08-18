@@ -105,11 +105,11 @@ module handlers
     character(len=5) :: output
 
     if (op == 0) then
-      output = char(left_value)
+      write(output, "(I5)") left_value
     else if (op == 1) then
-      output = char(left_value + right_value)
+      write(output, "(I5)") left_value + right_value
     else
-      output = char(left_value - right_value)
+      write(output, "(I5)") left_value - right_value
     endif
 
     call gtk_text_buffer_set_text(display_buf, output, 5)
@@ -133,8 +133,8 @@ module handlers
   subroutine writetext() bind(c)
     character(len=1) :: l, r
 
-    l = char(left_value, c_int)
-    r = char(right_value, c_int)
+    write(l, "(I1)") left_value
+    write(r, "(I1)") right_value
 
     if (op == 0) then
       call gtk_text_buffer_set_text(display_buf, l, 1)
