@@ -4,16 +4,16 @@ module handlers
                g_signal_connect, gtk_widget_show_all, gtk_window_set_title, gtk_container_add, &
                gtk_box_new, GTK_ORIENTATION_VERTICAL, gtk_button_new_with_label, gtk_widget_set_size_request, &
                GTK_ORIENTATION_HORIZONTAL, gtk_text_view_new, gtk_text_view_get_buffer, gtk_text_view_set_editable, &
-               gtk_text_view_set_cursor_visible
+               gtk_text_view_set_cursor_visible, gtk_text_buffer_set_text
   use g, only: g_application_run, g_object_unref
 
   implicit none
 
   ! ops : add = 1, sub = 2,
 
-  integer(c_int) :: op
-  integer(c_int) :: left_value
-  integer(c_int) :: right_value
+  integer :: op          = 0
+  integer :: left_value  = 0
+  integer :: right_value = 0
   type(c_ptr)    :: display_buf
 
   contains
@@ -102,119 +102,149 @@ module handlers
 
   subroutine enter_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
+    character(len=5) :: output
+
+    if (op == 0) then
+      output = char(left_value)
+    else if (op == 1) then
+      output = char(left_value + right_value)
+    else
+      output = char(left_value - right_value)
+    endif
+
+    call gtk_text_buffer_set_text(display_buf, output, 5)
+
     print *, "test", left_value, " ", right_value
-    op          = 0_c_int
-    left_value  = 0_c_int
-    right_value = 0_c_int
+    op          = 0
+    left_value  = 0
+    right_value = 0
   end subroutine enter_btn_clicked
 
   subroutine addsub_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    if (op == 1_c_int) then
-      op = 2_c_int
+    if (op == 1) then
+      op = 2
     else
-      op = 1_c_int
+      op = 1
     end if
+    call writetext()
   end subroutine addsub_btn_clicked
 
   subroutine writetext() bind(c)
-    character(len=5) :: str
+    character(len=1) :: l, r
 
-    if (op == 1_c_int) then
+    l = char(left_value, c_int)
+    r = char(right_value, c_int)
+
+    if (op == 0) then
+      call gtk_text_buffer_set_text(display_buf, l, 1)
+    else if (op == 1) then
+      call gtk_text_buffer_set_text(display_buf, l//" + "//r, 5)
     else
+      call gtk_text_buffer_set_text(display_buf, l//" - "//r, 5)
     endif
   end subroutine writetext
 
   ! this could be better. it's certainly not DRY and it's just brute forcing
   subroutine num0_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 0_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 0
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num0_btn_clicked
   subroutine num1_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 1_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 1
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num1_btn_clicked
   subroutine num2_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 2_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 2
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num2_btn_clicked
   subroutine num3_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 3_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 3
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num3_btn_clicked
   subroutine num4_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 4_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 4
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num4_btn_clicked
   subroutine num5_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 5_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 5
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num5_btn_clicked
   subroutine num6_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 6_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 6
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num6_btn_clicked
   subroutine num7_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 7_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 7
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num7_btn_clicked
   subroutine num8_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 8_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 8
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num8_btn_clicked
   subroutine num9_btn_clicked(widget, gdata) bind(c)
     type(c_ptr), value, intent(in) :: widget, gdata
-    integer(c_int)                 :: num = 9_c_int
-    if (op == 0_c_int) then
+    integer(c_int)                 :: num = 9
+    if (op == 0) then
       left_value = num
     else
       right_value = num
     end if
+    call writetext()
   end subroutine num9_btn_clicked
 end module handlers
 
